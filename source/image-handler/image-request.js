@@ -207,7 +207,7 @@ class ImageRequest {
     parseRequestType(event) {
         const path = event["path"];
         // ----
-        const matchDefault = new RegExp(/^(\/?)([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?$/);
+        const matchDefault = new RegExp(/^(\/?)([0-9a-zA-Z+\/]{4})*(([0-9a-zA-Z+\/]{2}==)|([0-9a-zA-Z+\/]{3}=))?(\/[^\/]+\.(jpg|png|webp|tiff|jpeg))?$/);
         const matchThumbor = new RegExp(/^(\/?)((fit-in)?|(filters:.+\(.?\))?|(unsafe)?).*(.+jpg|.+png|.+webp|.+tiff|.+jpeg)$/i);
         const matchCustom = new RegExp(/(\/?)(.*)(jpg|png|webp|tiff|jpeg)/i);
         const definedEnvironmentVariables = (
@@ -240,8 +240,8 @@ class ImageRequest {
     decodeRequest(event) {
         const path = event["path"];
         if (path !== undefined) {
-            const splitPath = path.split("/");
-            const encoded = splitPath[splitPath.length - 1];
+            const splitPath = path.split("/").filter((segment) => !!segment);
+            const encoded = splitPath[0];
             const toBuffer = Buffer.from(encoded, 'base64');
             try {
                 // To support European characters, 'ascii' was removed.
