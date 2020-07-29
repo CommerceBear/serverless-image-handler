@@ -11,16 +11,18 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+const logger = require('./logger');
 const ImageRequest = require('./image-request.js');
 const ImageHandler = require('./image-handler.js');
 
 exports.handler = async (event) => {
-    console.log(event);
+    const requestId = event.requestContext.requestId;
+    logger.http(`${requestId} - Event`, event);
     const imageRequest = new ImageRequest();
     const imageHandler = new ImageHandler();
     try {
         const request = await imageRequest.setup(event);
-        console.log(request);
+        logger.info(`${requestId} - Request`, request);
         const processedRequest = await imageHandler.process(request);
 
         const headers = getResponseHeaders();
@@ -29,6 +31,7 @@ exports.handler = async (event) => {
         headers["Last-Modified"] = request.LastModified;
         headers["Cache-Control"] = request.CacheControl;
 
+        logger.info(`${requestId} - Success`);
         return {
             "statusCode": 200,
             "headers" : headers,
@@ -36,12 +39,18 @@ exports.handler = async (event) => {
             "isBase64Encoded": true
         };
     } catch (err) {
-        console.log(err);
-
+        logger.error(`${requestId} - Error: `, err);
         return {
             "statusCode": err.status,
             "headers" : getResponseHeaders(true),
-            "body": JSON.stringify(err),
+            "body": JSON.stringify({
+              error: {
+                name: err.name,
+                code: err.code,
+                message: err.message,
+                stack: err.stack,
+              },
+            }),
             "isBase64Encoded": false
         };
     }

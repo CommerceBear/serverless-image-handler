@@ -47,7 +47,11 @@ class ImageHandler {
             edits.resize.fit = 'inside';
         }
 
-        const image = sharp(originalImage, { failOnError: false });
+        const image = sharp(
+          originalImage,
+          {
+            failOnError: false,
+          });
         const metadata = await image.metadata();
         const keys = Object.keys(edits);
         const values = Object.values(edits);
@@ -218,7 +222,7 @@ class ImageHandler {
             const response = await rekognition.detectFaces(params).promise();
             return Promise.resolve(response.FaceDetails[faceIdx].BoundingBox);
         } catch (err) {
-            console.log(err);
+            logger.error(err);
             if (err.message === "Cannot read property 'BoundingBox' of undefined") {
                 return Promise.reject({
                     status: 400,
