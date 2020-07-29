@@ -55,7 +55,7 @@ if (PAPERTRAIL_HOST && PAPERTRAIL_PORT) {
 }
 
 module.exports = winston.createLogger({
-  logger: LOGGER_LEVEL,
+  level: 'http',
   format: winston.format.combine(
     winston.format.colorize({
       colors: {
