@@ -15,7 +15,7 @@ const transports = [
 
 function formatMeta(meta) {
   const newInfoString = JSON.stringify(meta);
-  if (meta === '{}') {
+  if (newInfoString === '{}') {
     return '';
   }
   return ` ${newInfoString}`;
