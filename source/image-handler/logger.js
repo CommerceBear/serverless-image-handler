@@ -27,7 +27,7 @@ function logFormat({
   service,
   stack,
   [LEVEL]: rawLevel,
-  ...meta,
+  ...meta
 }) {
   const time = timestamp;
   const spaces = ' '.repeat('verbose'.length - rawLevel.length + 1);
@@ -51,7 +51,7 @@ if (PAPERTRAIL_HOST && PAPERTRAIL_PORT) {
     port: PAPERTRAIL_PORT,
     program: SERVICE,
     colorize: true,
-  });
+  }));
 }
 
 module.exports = winston.createLogger({
