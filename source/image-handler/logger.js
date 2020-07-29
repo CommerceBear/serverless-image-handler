@@ -7,6 +7,7 @@ const {
 } = process.env;
 
 const SERVICE = 'image-resizer';
+const LEVEL = Symbol.for('level');
 
 const transports = [
   new winston.transports.Console(),
