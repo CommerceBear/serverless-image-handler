@@ -22,7 +22,9 @@ exports.handler = async (event) => {
     const imageHandler = new ImageHandler();
     try {
         const request = await imageRequest.setup(event);
-        logger.info(`${requestId} - Request`, request);
+        const logRequest = { ...request };
+        delete logRequest.originalImage;
+        logger.info(`${requestId} - Request`, logRequest);
         const processedRequest = await imageHandler.process(request);
 
         const headers = getResponseHeaders();
