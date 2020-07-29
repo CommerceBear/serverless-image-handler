@@ -29,7 +29,7 @@ function logFormat({
   [LEVEL]: rawLevel,
   ...meta,
 }) {
-  const time = chalk.cyan(timestamp);
+  const time = timestamp;
   const spaces = ' '.repeat('verbose'.length - rawLevel.length + 1);
   const object = formatMeta(meta);
   const stackText = stack ? `\n${stack}` : '';
