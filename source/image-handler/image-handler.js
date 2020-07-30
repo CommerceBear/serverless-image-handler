@@ -24,12 +24,30 @@ class ImageHandler {
     async process(request) {
         const originalImage = request.originalImage;
         const edits = request.edits;
+        let quality = 80;
         if (edits !== undefined) {
-            const modifiedImage = await this.applyEdits(originalImage, edits);
-            if (request.outputFormat !== undefined) {
-                modifiedImage.toFormat(request.outputFormat);
+            let bufferImage;
+            for (;;) {
+                const modifiedImage = await this.applyEdits(originalImage, edits);
+                if (request.outputFormat !== undefined) {
+                    modifiedImage.toFormat(request.outputFormat);
+                }
+                bufferImage = await modifiedImage.toBuffer();
+                // AWS Lambdas are not allowed to return more than 5MB. If the resized image
+                // is too large, we have to continue shrinking it but with less quality.
+                if (bufferImage.length < 5e6) {
+                    break;
+                }
+                quality -= 20;
+                edits.jpeg = {
+                    ...(edits.jpeg || {}),
+                    quality,
+                };
+                logger.info(`Image still too large after resizing. Decreasing quality to ${quality}. New request:`, edits);
+                if (quality === 0) {
+                    throw new Error('Quality has decreased to 0: this image cannot be resized');
+                }
             }
-            const bufferImage = await modifiedImage.toBuffer();
             return bufferImage.toString('base64');
         } else {
             return originalImage.toString('base64');
