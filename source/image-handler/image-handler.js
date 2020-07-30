@@ -66,7 +66,7 @@ class ImageHandler {
             edits.resize.fit = 'inside';
         }
 
-        const image = sharp(originalImage, { failOnError: false });
+        const image = sharp(originalImage, { failOnError: false, sequentialRead: true });
         const metadata = await image.metadata();
         const keys = Object.keys(edits);
         const values = Object.values(edits);
